@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="2dp">
+
+    <ImageView
+        android:id="@+id/iv_news_lin"
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:layout_marginRight="4dp"
+        android:background="@color/colorGray"
+        android:padding="1dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/image_demo"/>
+
+    <TextView
+        android:id="@+id/tv_news_title_lin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@+id/iv_news_lin"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="是姐啊了解就开始计算随即拉开那里玩升几级岁姐啊了解啦外界看来努力努力了零距离交流是垃圾垃圾了"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tv_news_date_lin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_news_lin"
+        android:layout_toEndOf="@+id/iv_news_lin"
+        android:layout_toRightOf="@+id/iv_news_lin"
+        android:text="2016-08-23"
+        android:textColor="@color/colorGray"/>
+</RelativeLayout>
