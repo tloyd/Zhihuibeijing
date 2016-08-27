@@ -28,4 +28,5 @@ dependencies {
     compile project(':SlidingMenuLibrary')
     compile project(':XUtilsLibrary')
     compile project(':ViewPagerIndicatorLibrary')
+    compile project(':PullToRefreshLibrary')
 }

@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <ListView
+    <cc.springwind.zhihuibeijing.view.PullToRefreshListView
         android:id="@+id/lv_news_dpt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

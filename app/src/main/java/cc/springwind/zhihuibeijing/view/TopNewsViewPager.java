@@ -10,6 +10,9 @@ import android.view.MotionEvent;
  * @date: 2016/8/16 16:13
  */
 public class TopNewsViewPager extends ViewPager {
+    int startX;
+    int startY;
+
     public TopNewsViewPager(Context context) {
         super(context);
     }
@@ -20,41 +23,41 @@ public class TopNewsViewPager extends ViewPager {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        int startX = 0;
-        int startY = 0;
-
         getParent().requestDisallowInterceptTouchEvent(true);
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startX = (int) ev.getX();
                 startY = (int) ev.getY();
                 break;
-            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE:
                 int endX = (int) ev.getX();
                 int endY = (int) ev.getY();
-
-                int disX = startX - endX;
-                int disY = startY - endY;
-
-                if (Math.abs(disX) > Math.abs(disY)) {
+                int dx = endX - startX;
+                int dy = endY - startY;
+                if (Math.abs(dy) < Math.abs(dx)) {
                     int currentItem = getCurrentItem();
-                    if (disX > 0) {
-                        // 向右滑动
+                    // 左右滑动
+                    if (dx > 0) {
+                        // 向右划
                         if (currentItem == 0) {
+                            // 第一个页面,需要拦截
                             getParent().requestDisallowInterceptTouchEvent(false);
                         }
                     } else {
-                        // 向左滑动
-                        int count = getAdapter().getCount();
+                        // 向左划
+                        int count = getAdapter().getCount();// item总数
                         if (currentItem == count - 1) {
+                            // 最后一个页面,需要拦截
                             getParent().requestDisallowInterceptTouchEvent(false);
                         }
                     }
+
                 } else {
-                    // 上下滑动
-                    // 不需要拦截触摸事件
+                    // 上下滑动,需要拦截
                     getParent().requestDisallowInterceptTouchEvent(false);
                 }
+                break;
+            default:
                 break;
         }
         return super.dispatchTouchEvent(ev);
