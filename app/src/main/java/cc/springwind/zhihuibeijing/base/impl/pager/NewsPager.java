@@ -87,7 +87,7 @@ public class NewsPager extends BasePager {
         mDetailPagerList = new ArrayList<>();
         mDetailPagerList.add(new NewsMenuDetailPager(mActivity, mBean.data.get(0).children));
         mDetailPagerList.add(new TopicDetailPager(mActivity));
-        mDetailPagerList.add(new PhotosDetailPager(mActivity));
+        mDetailPagerList.add(new PhotosDetailPager(mActivity,ibPhotoChange));
         mDetailPagerList.add(new InteraDetailPager(mActivity));
 
         setCurrentDetailPosition(0);
@@ -101,5 +101,11 @@ public class NewsPager extends BasePager {
         pager.initData();
 
         tvTitle.setText(mBean.data.get(position).title);
+
+        if (pager instanceof PhotosDetailPager) {
+            ibPhotoChange.setVisibility(View.VISIBLE);
+        } else {
+            ibPhotoChange.setVisibility(View.GONE);
+        }
     }
 }

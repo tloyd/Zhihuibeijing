@@ -1,11 +1,17 @@
 package cc.springwind.zhihuibeijing.base.impl;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,12 +28,14 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import cc.springwind.zhihuibeijing.NewsDetailActivity;
 import cc.springwind.zhihuibeijing.R;
 import cc.springwind.zhihuibeijing.base.BaseMenuDetailPager;
 import cc.springwind.zhihuibeijing.domain.NewsBean;
 import cc.springwind.zhihuibeijing.domain.NewsTabBean;
 import cc.springwind.zhihuibeijing.global.Constants;
 import cc.springwind.zhihuibeijing.utils.CacheUtil;
+import cc.springwind.zhihuibeijing.utils.PrefsUtil;
 import cc.springwind.zhihuibeijing.utils.ToastUtil;
 import cc.springwind.zhihuibeijing.view.PullToRefreshListView;
 import cc.springwind.zhihuibeijing.view.TopNewsViewPager;
@@ -52,6 +60,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
     private NewsAdapter mNewsAdapter;
     private boolean isMore = false;
     private String mMoreUrl;
+    private Handler mHandler;
 
     public TabDetailPager(Activity activity, NewsBean.NewsChild newsChild) {
         super(activity);
@@ -93,6 +102,28 @@ public class TabDetailPager extends BaseMenuDetailPager {
                     ToastUtil.showToast(mActivity, "没有更多数据了!");
                     lvNewsDpt.onRefreshComplete(true);
                 }
+            }
+        });
+        // 设置新闻页签的点击事件
+        lvNewsDpt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                position -= lvNewsDpt.getHeaderViewsCount();
+                System.out.println("position:" + position + "被点击了!");
+                NewsTabBean.News news = mNewsList.get(position);
+
+                String read_ids = PrefsUtil.getString(mActivity, Constants.READ_IDS, "");
+                if (!read_ids.contains(news.id + "")) {
+                    read_ids = read_ids + news.id + ",";
+                    PrefsUtil.putString(mActivity, Constants.READ_IDS, read_ids);
+                }
+
+                TextView textView = (TextView) view.findViewById(R.id.tv_news_title_lin);
+                textView.setTextColor(Color.GRAY);
+
+                Intent intent = new Intent(mActivity, NewsDetailActivity.class);
+                intent.putExtra("url", news.url);
+                mActivity.startActivity(intent);
             }
         });
         return view;
@@ -195,6 +226,40 @@ public class TabDetailPager extends BaseMenuDetailPager {
             mNewsList = mbean.data.news;
             mNewsAdapter = new NewsAdapter();
             lvNewsDpt.setAdapter(mNewsAdapter);
+
+            mHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    int currentItem = vpTopDpt.getCurrentItem();
+                    currentItem++;
+                    if (currentItem > mTopnews.size() - 1) {
+                        currentItem = 0;
+                    }
+                    vpTopDpt.setCurrentItem(currentItem);
+                    mHandler.sendEmptyMessageDelayed(0, 3000);
+                }
+            };
+            mHandler.sendEmptyMessageDelayed(0, 3000);
+            // 处理手指按下时的操作
+            vpTopDpt.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            mHandler.removeCallbacksAndMessages(null);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            mHandler.sendEmptyMessageDelayed(0, 3000);
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                            mHandler.sendEmptyMessageDelayed(0, 3000);
+                            break;
+                        default:
+                            break;
+                    }
+                    return false;
+                }
+            });
         } else {
             ArrayList<NewsTabBean.News> moreNews = mbean.data.news;
             mNewsList.addAll(moreNews);
@@ -239,6 +304,14 @@ public class TabDetailPager extends BaseMenuDetailPager {
             NewsTabBean.News item = getItem(position);
             viewHolder.tvNewsTitleLin.setText(item.title);
             viewHolder.tvNewsDateLin.setText(item.pubdate);
+
+            String read_ids = PrefsUtil.getString(mActivity, Constants.READ_IDS, "");
+            if (read_ids.contains(item.id + "")) {
+                viewHolder.tvNewsTitleLin.setTextColor(Color.GRAY);
+            } else {
+                viewHolder.tvNewsTitleLin.setTextColor(Color.BLACK);
+            }
+
             x.image().bind(viewHolder.ivNewsLin, item.listimage, builder.build());
             return convertView;
         }

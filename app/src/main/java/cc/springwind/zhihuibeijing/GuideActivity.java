@@ -23,6 +23,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import cc.springwind.zhihuibeijing.global.Constants;
 import cc.springwind.zhihuibeijing.utils.PrefsUtil;
+import cn.sharesdk.framework.ShareSDK;
 
 /**
  * Created by HeFan on 2016/8/12.
@@ -51,7 +52,7 @@ public class GuideActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_guide);
         ButterKnife.inject(this);
-
+        ShareSDK.initSDK(this,null);
         initData();
 
         vpGuideAg.setAdapter(new GuideAdapter());

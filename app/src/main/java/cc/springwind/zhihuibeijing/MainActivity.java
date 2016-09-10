@@ -3,6 +3,7 @@ package cc.springwind.zhihuibeijing;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Window;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -22,15 +23,23 @@ public class MainActivity extends SlidingFragmentActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+
 
         setBehindContentView(R.layout.menu_left);
 
         SlidingMenu menu = getSlidingMenu();
         menu.setMode(SlidingMenu.LEFT);
+        menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        menu.setFadeDegree(0.35f);
+        menu.setBehindOffset(300);
+
+        /*SlidingMenu menu = getSlidingMenu();
+        menu.setMode(SlidingMenu.LEFT);
         menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN); //设置触摸模式为全屏触摸
         menu.setBehindOffset(650);
-        menu.setFadeDegree(0.35f);
+        menu.setFadeDegree(0.35f);*/
 
         initFragment();
     }
